@@ -51,7 +51,7 @@
     <hr>
     <table id='location' border="0.01">
         <thead>
-            <tr><th>Order</th><th>Latitude</th><th>Longitude</th></tr>
+            <tr><th>Order</th><th>Latitude</th><th>Longitude</th><th>Memo</th></tr>
         </thead>
         <tbody>
         </tbody>
@@ -173,15 +173,19 @@
         const newCell1 = newRow.insertCell(0);
         const newCell2 = newRow.insertCell(1);
         const newCell3 = newRow.insertCell(2);
+        const newCell4 = newRow.insertCell(3);
         
         count = count + 1;
         var locationDiv = document.getElementById('result');
         var location1 = locationDiv.innerHTML.substring(13, 22);
         var location2 = locationDiv.innerHTML.substring(26, 36);
+        var memo = prompt("메모할 내용을 기입해주세요");
+
         // Cell에 텍스트 추가
         newCell1.innerText = count;
         newCell2.innerText = location1;
         newCell3.innerText = location2;
+        newCell4.innerText = memo;
         }
 
         function deleteRow(rownum) {
