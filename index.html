@@ -49,9 +49,9 @@
             onclick='addRow()'/>
     <button type="button" id="getMyPositionBtn" onclick="getCurrentPosBtn()">내 위치 가져오기</button>
     <hr>
-    <table id='location' border="0.01" style="width:60vw;">
+    <table id='location' border="0.01">
         <thead>
-            <tr><th>순서</th><th>좌표</th></tr>
+            <tr><th>Order</th><th>Latitude</th><th>Longitude</th></tr>
         </thead>
         <tbody>
         </tbody>
@@ -59,6 +59,7 @@
     <input type='button' 
             value='마지막 줄 삭제' 
             onclick='deleteRow(-1)' />
+    <a href="" id="download">파일로 저장</a>
 
 
 
@@ -171,6 +172,7 @@
         // 새 행(Row)에 Cell 추가
         const newCell1 = newRow.insertCell(0);
         const newCell2 = newRow.insertCell(1);
+        const newCell3 = newRow.insertCell(2);
         
         count = count + 1;
         var locationDiv = document.getElementById('result');
@@ -178,7 +180,8 @@
         var location2 = locationDiv.innerHTML.substring(26, 36);
         // Cell에 텍스트 추가
         newCell1.innerText = count;
-        newCell2.innerText = location1 + " / " + location2;
+        newCell2.innerText = location1;
+        newCell3.innerText = location2;
         }
 
         function deleteRow(rownum) {
@@ -206,9 +209,9 @@
         //});
 
         // 기존에 마커가 있다면 제거
-        //marker.setMap(null);
-        //marker.setMap(map);
-        //
+        marker.setMap(null);
+        marker.setMap(map);
+        
         };
 
         function locationLoadError(pos){
@@ -219,6 +222,40 @@
         function getCurrentPosBtn(){
             navigator.geolocation.getCurrentPosition(locationLoadSuccess,locationLoadError);
         };
+
+
+        //다운로드 하이퍼링크에 클릭 이벤트 발생시 saveCSV 함수를 호출하도록 이벤트 리스너를 추가
+        document.addEventListener('DOMContentLoaded', function(){
+        document.getElementById('download').addEventListener('click', function(){
+            saveCSV('location_list.csv'); // CSV파일 다운로드 함수 호출
+            return false;
+        })
+        });
+
+        //CSV 생성 함수
+        function saveCSV(fileName){
+            //CSV 문자열 생성
+            let downLink = document.getElementById('download');
+            let csv = ''; //CSV최종 문자열을 저장하는 변수
+            let rows = document.querySelectorAll("#location tr"); // 테이블에서 행 요소들을 모두 선택
+
+            //행단위 루핑
+            for (var i = 0; i < rows.length; i++) {
+                let cells = rows[i].querySelectorAll("td, th");
+                let row = [];
+                //행의 셀 값을 배열로 얻기
+                cells.forEach(function(cell){
+                row.push(cell.innerHTML);
+                });
+
+                csv += row.join(',') + (i != rows.length-1 ? '\n':''); // 배열을 문자열+줄바꿈으로 변환
+            }
+
+            //CSV 파일 저장
+            csvFile = new Blob([csv], {type: "text/csv"}); // 생성한 CSV 문자열을 Blob 데이터로 생성
+            downLink.href = window.URL.createObjectURL(csvFile); // Blob 데이터를 URL 객체로 감싸 다운로드 하이퍼링크에 붙임.
+            downLink.download = fileName; // 인자로 받은 다운로드 파일명을 지정
+        }
     </script>
 </body>
 </html>
